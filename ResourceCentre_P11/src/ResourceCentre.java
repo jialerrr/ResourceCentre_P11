@@ -3,34 +3,29 @@ import java.util.ArrayList;
 public class ResourceCentre {
 
 
+	private static final int OPTION_QUIT = 5;
 	public static void main(String[] args) {
 
 		ArrayList<Camcorder> camcorderList = new ArrayList<Camcorder>();
 		ArrayList<Chromebook> chromebookList = new ArrayList<Chromebook>();
 
-		camcorderList.add(new Camcorder("CC001", "Sony HDR-CX405", 35));
-		camcorderList.add(new Camcorder("CC002", "Panasonic HC-MDH2", 10));
-		chromebookList.add(new Chromebook("CB001", "ASUS Chromebook ", "Win 10"));
-		chromebookList.add(new Chromebook("CB002", "HP Chromebook", "Win 10"));
+		addSample(camcorderList, chromebookList);
 
 		int option = 0;
 
-		while (option != 5) {
+		while (option != OPTION_QUIT) {
 
 			ResourceCentre.menu();
 			option = Helper.readInt("Enter an option > ");
 
 			if (option == 1) {
 				// View all items
-				ResourceCentre.viewAllCamcorder(camcorderList);
-				ResourceCentre.viewAllChromebook(chromebookList);
+				viewAllItems(camcorderList, chromebookList);
 
 			} else if (option == 2) {
 				// Add a new item
 				ResourceCentre.setHeader("ADD");			
-				ResourceCentre.setHeader("ITEM TYPES");
-				System.out.println("1. Camcorder");
-				System.out.println("2. Chromebook");
+				itemTypeMenu();
 				
 				int itemType = Helper.readInt("Enter option to select item type > ");
 
@@ -45,15 +40,13 @@ public class ResourceCentre {
 					ResourceCentre.addChromebook(chromebookList, cb);
 
 				} else {
-					System.out.println("Invalid type");
+					printInvalid();
 				}
 
 			} else if (option == 3) {
 				// Loan item
 				ResourceCentre.setHeader("LOAN");			
-				ResourceCentre.setHeader("ITEM TYPES");
-				System.out.println("1. Camcorder");
-				System.out.println("2. Chromebook");
+				itemTypeMenu();
 				
 				int itemType = Helper.readInt("Enter option to select item type > ");
 
@@ -64,15 +57,13 @@ public class ResourceCentre {
 					// Loan Chromebook
 					ResourceCentre.loanChromebook(chromebookList);
 				} else {
-					System.out.println("Invalid type");
+					printInvalid();
 				}
 
 			} else if (option == 4) {
 				// Return item
 				ResourceCentre.setHeader("RETURN");				
-				ResourceCentre.setHeader("ITEM TYPES");
-				System.out.println("1. Camcorder");
-				System.out.println("2. Chromebook");
+				itemTypeMenu();
 				
 				int itemType = Helper.readInt("Enter option to select item type > ");
 				if (itemType == 1) {
@@ -82,10 +73,10 @@ public class ResourceCentre {
 					// Return Chromebook
 					ResourceCentre.returnChromebook(chromebookList);
 				} else {
-					System.out.println("Invalid type");
+					printInvalid();
 				}
 
-			} else if (option == 5) {
+			} else if (option == OPTION_QUIT) {
 				System.out.println("Bye!");
 			} else {
 				System.out.println("Invalid option");
@@ -93,6 +84,28 @@ public class ResourceCentre {
 
 		}
 
+	}
+
+	public static void printInvalid() {
+		System.out.println("Invalid type");
+	}
+
+	public static void addSample(ArrayList<Camcorder> camcorderList, ArrayList<Chromebook> chromebookList) {
+		camcorderList.add(new Camcorder("CC001", "Sony HDR-CX405", 35));
+		camcorderList.add(new Camcorder("CC002", "Panasonic HC-MDH2", 10));
+		chromebookList.add(new Chromebook("CB001", "ASUS Chromebook ", "Win 10"));
+		chromebookList.add(new Chromebook("CB002", "HP Chromebook", "Win 10"));
+	}
+
+	public static void viewAllItems(ArrayList<Camcorder> camcorderList, ArrayList<Chromebook> chromebookList) {
+		ResourceCentre.viewAllCamcorder(camcorderList);
+		ResourceCentre.viewAllChromebook(chromebookList);
+	}
+
+	public static void itemTypeMenu() {
+		ResourceCentre.setHeader("ITEM TYPES");
+		System.out.println("1. Camcorder");
+		System.out.println("2. Chromebook");
 	}
 
 	public static void menu() {
@@ -270,7 +283,8 @@ public class ResourceCentre {
 		boolean isReturned = false;
 
 		for (int i = 0; i < camcorderList.size(); i++) {
-			if (tag.equalsIgnoreCase(camcorderList.get(i).getAssetTag())
+			String assetTag = camcorderList.get(i).getAssetTag();
+			if (tag.equalsIgnoreCase(assetTag)
 					&& camcorderList.get(i).getIsAvailable() == false) {
 				camcorderList.get(i).setIsAvailable(true);
 				camcorderList.get(i).setDueDate("");
